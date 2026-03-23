@@ -389,7 +389,11 @@
     const colet   = data.filter(d => d.situacao === STATUS_OK).length;
     const falta   = data.filter(d => d.situacao === STATUS_MISS).length;
     const viagem  = data.filter(d => d.situacao === STATUS_VIAGEM).length;
-    const pct     = total ? ((colet / total) * 100).toFixed(1) : 0;
+    
+    // Novo cálculo de Efetividade: Removemos as 'Viagens' da base obrigatória
+    const elegiveis = total - viagem;
+    const pct     = elegiveis > 0 ? ((colet / elegiveis) * 100).toFixed(1) : 0;
+    const pctFalta = elegiveis > 0 ? ((falta / elegiveis) * 100).toFixed(1) : 0;
 
     document.getElementById('kpi-grid').innerHTML = `
       <div class="kpi-card grad">
@@ -398,7 +402,7 @@
         <div class="kpi-sub">${activeBandeira === 'TODAS' ? 'TODAS AS BANDEIRAS' : activeBandeira}</div>
       </div>
       <div class="kpi-card pink">
-        <div class="kpi-label">Coletado</div>
+        <div class="kpi-label">Efetividade</div>
         <div class="kpi-value pink">${colet}</div>
         <div class="kpi-sub">SKU já coletados</div>
         <div class="kpi-pct" style="color:var(--accent-pink)">${pct}%</div>
@@ -406,13 +410,13 @@
       <div class="kpi-card purple">
         <div class="kpi-label">Falta Coletar</div>
         <div class="kpi-value purple">${falta}</div>
-        <div class="kpi-sub">Pendentes de coleta</div>
-        <div class="kpi-pct" style="color:var(--accent-purple)">${total ? ((falta/total)*100).toFixed(1) : 0}%</div>
+        <div class="kpi-sub">Dentro das elegíveis</div>
+        <div class="kpi-pct" style="color:var(--accent-purple)">${pctFalta}%</div>
       </div>
       <div class="kpi-card orange">
         <div class="kpi-label">Sem Visitas / Viagem</div>
         <div class="kpi-value orange">${viagem}</div>
-        <div class="kpi-sub">Aguardando visita</div>
+        <div class="kpi-sub">Lojas descartadas da Base</div>
         <div class="kpi-pct" style="color:var(--accent-orange)">${total ? ((viagem/total)*100).toFixed(1) : 0}%</div>
       </div>
     `;
@@ -429,7 +433,10 @@
       const rows  = data.filter(d => d.bandeira === b);
       const total = rows.length;
       const colet = rows.filter(d => d.situacao === STATUS_OK).length;
-      const pct   = total ? ((colet / total) * 100).toFixed(1) : 0;
+      const viagem = rows.filter(d => d.situacao === STATUS_VIAGEM).length;
+      const elegiveis = total - viagem;
+      
+      const pct   = elegiveis > 0 ? ((colet / elegiveis) * 100).toFixed(1) : 0;
       const color = BANDEIRA_COLORS[i % BANDEIRA_COLORS.length];
 
       return `
@@ -438,7 +445,7 @@
           <div class="prog-track">
             <div class="prog-fill" style="width:${pct}%;background:${color};"></div>
           </div>
-          <div class="prog-count">${colet}/${total}</div>
+          <div class="prog-count">${colet}/${elegiveis} (Elegíveis)</div>
           <div class="prog-pct">${pct}%</div>
         </div>`;
     }).join('');
