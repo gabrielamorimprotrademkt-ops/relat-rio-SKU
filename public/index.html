@@ -128,7 +128,7 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 22px 24px;
+      padding: 22px 24px; padding-right: 70px;
       position: relative; overflow: hidden;
       transition: transform .2s, box-shadow .2s;
     }
@@ -312,8 +312,11 @@
 <script>
   // ── CONFIG ──────────────────────────────────────────────────────────────────
   const SHEET_ID   = '11FtS39zfBRvGz89Ld3JRVDUrvzK7xKJSNQuZBSbKF_0';
-  const API_KEY    = ''; // deixado vazio — usamos data.json local gerado pelo script Node
-  const DATA_URL   = '/api/data'; // Backend Serverless (Vercel) ou Local
+  const API_KEY    = ''; // deixado vazio
+
+  // Lógica Mística inteligente: Se estiver no seu computador, usa o arquivo. Se estiver na nuvem (Vercel), usa "Ao Vivo".
+  const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  const DATA_URL = IS_LOCAL ? './data.json' : '/api/data';
 
   const STATUS_OK    = 'Coletado';
   const STATUS_MISS  = 'Falta coletar';
@@ -416,7 +419,7 @@
       <div class="kpi-card orange">
         <div class="kpi-label">Sem Visitas / Viagem</div>
         <div class="kpi-value orange">${viagem}</div>
-        <div class="kpi-sub">Lojas descartadas da Base</div>
+        <div class="kpi-sub">Lojas descartadas</div>
         <div class="kpi-pct" style="color:var(--accent-orange)">${total ? ((viagem/total)*100).toFixed(1) : 0}%</div>
       </div>
     `;
@@ -433,10 +436,8 @@
       const rows  = data.filter(d => d.bandeira === b);
       const total = rows.length;
       const colet = rows.filter(d => d.situacao === STATUS_OK).length;
-      const viagem = rows.filter(d => d.situacao === STATUS_VIAGEM).length;
-      const elegiveis = total - viagem;
       
-      const pct   = elegiveis > 0 ? ((colet / elegiveis) * 100).toFixed(1) : 0;
+      const pct   = total ? ((colet / total) * 100).toFixed(1) : 0;
       const color = BANDEIRA_COLORS[i % BANDEIRA_COLORS.length];
 
       return `
@@ -445,7 +446,7 @@
           <div class="prog-track">
             <div class="prog-fill" style="width:${pct}%;background:${color};"></div>
           </div>
-          <div class="prog-count">${colet}/${elegiveis} (Elegíveis)</div>
+          <div class="prog-count">${colet}/${total}</div>
           <div class="prog-pct">${pct}%</div>
         </div>`;
     }).join('');
@@ -505,9 +506,9 @@
       data: {
         labels: bandeiras,
         datasets: [
-          { label: 'Coletado', data: coletados, backgroundColor: 'rgba(255,0,108,.85)', borderRadius: 6, borderSkipped: false },
-          { label: 'Falta Coletar', data: faltantes, backgroundColor: 'rgba(106,10,170,.85)', borderRadius: 6, borderSkipped: false },
-          { label: 'Sem Visitas', data: viagens, backgroundColor: 'rgba(253,80,3,.85)', borderRadius: 6, borderSkipped: false },
+          { label: 'Coletado', data: coletados, backgroundColor: 'rgba(255,0,108,.85)', borderRadius: 6, borderSkipped: false, minBarLength: 15 },
+          { label: 'Falta Coletar', data: faltantes, backgroundColor: 'rgba(106,10,170,.85)', borderRadius: 6, borderSkipped: false, minBarLength: 15 },
+          { label: 'Sem Visitas', data: viagens, backgroundColor: 'rgba(253,80,3,.85)', borderRadius: 6, borderSkipped: false, minBarLength: 15 },
         ]
       },
       options: {

@@ -1,6 +1,9 @@
 {
   "name": "dashboard-sku",
   "version": "1.0.0",
+  "scripts": {
+    "dev": "node fetch_data.js && npx serve public --listen 3030 --no-clipboard"
+  },
   "dependencies": {
     "googleapis": "^133.0.0"
   }
