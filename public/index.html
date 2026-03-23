@@ -313,7 +313,7 @@
   // ── CONFIG ──────────────────────────────────────────────────────────────────
   const SHEET_ID   = '11FtS39zfBRvGz89Ld3JRVDUrvzK7xKJSNQuZBSbKF_0';
   const API_KEY    = ''; // deixado vazio — usamos data.json local gerado pelo script Node
-  const DATA_URL   = './data.json'; // arquivo gerado pelo fetch_data.js
+  const DATA_URL   = '/api/data'; // Backend Serverless (Vercel) ou Local
 
   const STATUS_OK    = 'Coletado';
   const STATUS_MISS  = 'Falta coletar';
@@ -337,7 +337,7 @@
 
     try {
       const res = await fetch(DATA_URL + '?t=' + Date.now());
-      if (!res.ok) throw new Error('Falha ao buscar data.json');
+      if (!res.ok) throw new Error('Falha de conexão com a API Serverless (/api/data). Verifique se as variáveis de ambiente foram configuradas na Vercel.');
       allData = await res.json();
 
       document.getElementById('last-updated').textContent =
