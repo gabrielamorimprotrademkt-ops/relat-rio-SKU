@@ -243,27 +243,27 @@
   <div class="header-left">
     <img src="logo%20novo%202026.png" alt="Protrade MKT" class="logo">
     <div>
-      <h1>DASHBOARD — SKUs SAMSUNG</h1>
-      <p>Efetividade de coleta por bandeira · Protrade MKT</p>
+      <h1 id="txtH1">DASHBOARD — SKUs SAMSUNG</h1>
+      <p id="txtH2">Efetividade de coleta por bandeira · Protrade MKT</p>
     </div>
   </div>
   <div class="header-right">
     <span id="last-updated">Aguardando…</span>
     <button id="btn-export" onclick="exportExcel()">
       <span class="icon-excel">📊</span>
-      Exportar Excel
+      <span id="txtBtnExport">Exportar Excel</span>
     </button>
     <button id="btn-refresh" onclick="loadData()">
       <span class="icon-refresh">↻</span>
       <span class="spin">⟳</span>
-      Atualizar
+      <span id="txtBtnRefresh">Atualizar</span>
     </button>
   </div>
 </header>
 
 <!-- FILTERS -->
 <div id="filter-bar">
-  <label>Bandeira:</label>
+  <label id="txtFilter">Bandeira:</label>
   <div class="chip-group" id="chips"></div>
 </div>
 
@@ -274,32 +274,32 @@
 
   <!-- PROGRESS POR BANDEIRA -->
   <div class="prog-section">
-    <h2>Efetividade por Bandeira</h2>
+    <h2 id="txtEffTitle">Efetividade por Bandeira</h2>
     <div id="prog-list"></div>
   </div>
 
   <!-- CHARTS -->
   <div class="chart-grid">
     <div class="chart-card">
-      <h2>Distribuição de Status (Geral)</h2>
+      <h2 id="txtDistTitle">Distribuição de Status (Geral)</h2>
       <div class="chart-wrap"><canvas id="donutChart"></canvas></div>
     </div>
     <div class="chart-card">
-      <h2>Coleta por Bandeira</h2>
+      <h2 id="txtBarTitle">Coleta por Bandeira</h2>
       <div class="chart-wrap"><canvas id="barChart"></canvas></div>
     </div>
   </div>
 
   <!-- TABLE -->
   <div class="table-card">
-    <h2>Listagem de PDVs <span id="table-count" style="color:var(--muted);font-weight:400;font-size:.78rem;text-transform:none;letter-spacing:0;"></span></h2>
+    <h2><span id="txtTableTitle">Listagem de PDVs</span> <span id="table-count" style="color:var(--muted);font-weight:400;font-size:.78rem;text-transform:none;letter-spacing:0;"></span></h2>
     <table>
       <thead>
         <tr>
           <th>#</th>
-          <th>Bandeira</th>
-          <th>Nome do PDV</th>
-          <th>Situação</th>
+          <th id="txtThBrand">Bandeira</th>
+          <th id="txtThName">Nome do PDV</th>
+          <th id="txtThStatus">Situação</th>
         </tr>
       </thead>
       <tbody id="tbody"></tbody>
@@ -315,6 +315,53 @@
   // Lógica Mística inteligente: Se estiver no seu computador, usa o arquivo. Se estiver na nuvem (Vercel), usa "Ao Vivo".
   const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
   const DATA_URL = IS_LOCAL ? './data.json' : '/api/data';
+  const LANG = IS_LOCAL ? 'en' : 'pt';
+
+  const t = {
+    h1: { pt: 'DASHBOARD — SKUs SAMSUNG', en: 'SAMSUNG SKUs DASHBOARD' },
+    h2: { pt: 'Efetividade de coleta por bandeira · Protrade MKT', en: 'Collection effectiveness by brand · Protrade MKT' },
+    btnRefresh: { pt: 'Atualizar', en: 'Refresh Data' },
+    btnExport: { pt: 'Exportar Excel', en: 'Export Excel' },
+    filter: { pt: 'Bandeira:', en: 'Brand Filter:' },
+    effTitle: { pt: 'Efetividade por Bandeira', en: 'Collection Effectiveness by Brand' },
+    distTitle: { pt: 'Distribuição de Status (Geral)', en: 'Overall Status Distribution' },
+    barTitle: { pt: 'Coleta por Bandeira', en: 'Collection Bar Chart' },
+    tableTitle: { pt: 'Listagem de PDVs', en: 'POS List' },
+    thBrand: { pt: 'Bandeira', en: 'Brand' },
+    thName: { pt: 'Nome do PDV', en: 'POS Name' },
+    thStatus: { pt: 'Situação', en: 'Status' },
+    updated: { pt: 'Atualizado: ', en: 'Updated: ' },
+    all: { pt: 'TODAS', en: 'ALL' },
+    allSub: { pt: 'TODAS AS BANDEIRAS', en: 'ALL BRANDS' },
+    
+    // KPI Cards:
+    kTotal: { pt: 'Total de Lojas (Elegíveis)', en: 'Total Stores (Eligible)' },
+    kEff: { pt: 'Efetividade', en: 'Effectiveness' },
+    kEffSub: { pt: 'SKU já coletados', en: 'SKUs successfully collected' },
+    kMiss: { pt: 'Falta Coletar', en: 'Missing' },
+    kMissSub: { pt: 'Dentro das elegíveis', en: 'Among eligible stores' },
+    kTrip: { pt: 'Sem Visitas / Viagem', en: 'No Visits / Trip' },
+    kTripSub: { pt: 'Lojas descartadas', en: 'Excluded from math' },
+
+    // Status / Labels:
+    stOk: { pt: 'Coletado', en: 'Collected' },
+    stMiss: { pt: 'Falta Coletar', en: 'Missing' },
+    stTrip: { pt: 'Sem Visitas', en: 'No Visits' }
+  };
+
+  // Init DOM Translator
+  document.getElementById('txtH1').textContent = t.h1[LANG];
+  document.getElementById('txtH2').textContent = t.h2[LANG];
+  document.getElementById('txtBtnRefresh').textContent = t.btnRefresh[LANG];
+  document.getElementById('txtBtnExport').textContent = t.btnExport[LANG];
+  document.getElementById('txtFilter').textContent = t.filter[LANG];
+  document.getElementById('txtEffTitle').textContent = t.effTitle[LANG];
+  document.getElementById('txtDistTitle').textContent = t.distTitle[LANG];
+  document.getElementById('txtBarTitle').textContent = t.barTitle[LANG];
+  document.getElementById('txtTableTitle').textContent = t.tableTitle[LANG];
+  document.getElementById('txtThBrand').textContent = t.thBrand[LANG];
+  document.getElementById('txtThName').textContent = t.thName[LANG];
+  document.getElementById('txtThStatus').textContent = t.thStatus[LANG];
 
   const STATUS_OK    = 'Coletado';
   const STATUS_MISS  = 'Falta coletar';
@@ -328,7 +375,7 @@
   Chart.register(ChartDataLabels);
 
   let allData = [];
-  let activeBandeira = 'TODAS';
+  let activeBandeira = t.all[LANG];
   let donutChart, barChart;
 
   // ── LOAD ────────────────────────────────────────────────────────────────────
@@ -342,7 +389,7 @@
       allData = await res.json();
 
       document.getElementById('last-updated').textContent =
-        'Atualizado: ' + new Date().toLocaleString('pt-BR');
+        t.updated[LANG] + new Date().toLocaleString(LANG === 'en' ? 'en-US' : 'pt-BR');
 
       buildFilters();
       render();
@@ -356,7 +403,7 @@
 
   // ── FILTERS ─────────────────────────────────────────────────────────────────
   function buildFilters() {
-    const bandeiras = ['TODAS', ...new Set(allData.map(d => d.bandeira).filter(Boolean).sort())];
+    const bandeiras = [t.all[LANG], ...new Set(allData.map(d => d.bandeira).filter(Boolean).sort())];
     const container = document.getElementById('chips');
     container.innerHTML = '';
     bandeiras.forEach(b => {
@@ -370,7 +417,7 @@
 
   // ── FILTER DATA ──────────────────────────────────────────────────────────────
   function filtered() {
-    if (activeBandeira === 'TODAS') return allData;
+    if (activeBandeira === t.all[LANG]) return allData;
     return allData.filter(d => d.bandeira === activeBandeira);
   }
 
@@ -398,26 +445,26 @@
 
     document.getElementById('kpi-grid').innerHTML = `
       <div class="kpi-card grad">
-        <div class="kpi-label">Total de Lojas (Elegíveis)</div>
+        <div class="kpi-label">${t.kTotal[LANG]}</div>
         <div class="kpi-value grad">${elegiveis}</div>
-        <div class="kpi-sub">${activeBandeira === 'TODAS' ? 'TODAS AS BANDEIRAS' : activeBandeira}</div>
+        <div class="kpi-sub">${activeBandeira === t.all[LANG] ? t.allSub[LANG] : activeBandeira}</div>
       </div>
       <div class="kpi-card pink">
-        <div class="kpi-label">Efetividade</div>
+        <div class="kpi-label">${t.kEff[LANG]}</div>
         <div class="kpi-value pink">${colet}</div>
-        <div class="kpi-sub">SKU já coletados</div>
+        <div class="kpi-sub">${t.kEffSub[LANG]}</div>
         <div class="kpi-pct" style="color:var(--accent-pink)">${pct}%</div>
       </div>
       <div class="kpi-card purple">
-        <div class="kpi-label">Falta Coletar</div>
+        <div class="kpi-label">${t.kMiss[LANG]}</div>
         <div class="kpi-value purple">${falta}</div>
-        <div class="kpi-sub">Dentro das elegíveis</div>
+        <div class="kpi-sub">${t.kMissSub[LANG]}</div>
         <div class="kpi-pct" style="color:var(--accent-purple)">${pctFalta}%</div>
       </div>
       <div class="kpi-card orange">
-        <div class="kpi-label">Sem Visitas / Viagem</div>
+        <div class="kpi-label">${t.kTrip[LANG]}</div>
         <div class="kpi-value orange">${viagem}</div>
-        <div class="kpi-sub">Lojas descartadas</div>
+        <div class="kpi-sub">${t.kTripSub[LANG]}</div>
         <div class="kpi-pct" style="color:var(--accent-orange)">${total ? ((viagem/total)*100).toFixed(1) : 0}%</div>
       </div>
     `;
@@ -459,7 +506,7 @@
     const cfg = {
       type: 'doughnut',
       data: {
-        labels: ['Coletado', 'Falta Coletar', 'Sem Visitas / Viagem'],
+        labels: [t.stOk[LANG], t.stMiss[LANG], t.kTrip[LANG]],
         datasets: [{
           data: [colet, falta, viagem],
           backgroundColor: ['rgba(255,0,108,.85)', 'rgba(106,10,170,.85)', 'rgba(253,80,3,.85)'],
@@ -504,9 +551,9 @@
       data: {
         labels: bandeiras,
         datasets: [
-          { label: 'Coletado', data: coletados, backgroundColor: 'rgba(255,0,108,.85)', borderRadius: 6, borderSkipped: false, minBarLength: 15 },
-          { label: 'Falta Coletar', data: faltantes, backgroundColor: 'rgba(106,10,170,.85)', borderRadius: 6, borderSkipped: false, minBarLength: 15 },
-          { label: 'Sem Visitas', data: viagens, backgroundColor: 'rgba(253,80,3,.85)', borderRadius: 6, borderSkipped: false, minBarLength: 15 },
+          { label: t.stOk[LANG], data: coletados, backgroundColor: 'rgba(255,0,108,.85)', borderRadius: 6, borderSkipped: false, minBarLength: 15 },
+          { label: t.stMiss[LANG], data: faltantes, backgroundColor: 'rgba(106,10,170,.85)', borderRadius: 6, borderSkipped: false, minBarLength: 15 },
+          { label: t.stTrip[LANG], data: viagens, backgroundColor: 'rgba(253,80,3,.85)', borderRadius: 6, borderSkipped: false, minBarLength: 15 },
         ]
       },
       options: {
@@ -539,15 +586,15 @@
     
     // Mostra o total oficial desconsiderando as viagens também igual ao painel
     const viagensNaLista = data.filter(d => d.situacao === STATUS_VIAGEM).length;
-    document.getElementById('table-count').textContent = `(${data.length - viagensNaLista} Elegíveis)`;
+    document.getElementById('table-count').textContent = `(${data.length - viagensNaLista} ${LANG === 'en' ? 'Eligible' : 'Elegíveis'})`;
 
-    if (!data.length) { tbody.innerHTML = `<tr><td colspan="4" class="empty">Nenhum PDV encontrado</td></tr>`; return; }
+    if (!data.length) { tbody.innerHTML = `<tr><td colspan="4" class="empty">${t.tableEmpty[LANG]}</td></tr>`; return; }
 
     tbody.innerHTML = data.map((d, i) => {
       let badge, bClass;
-      if (d.situacao === STATUS_OK)     { badge = 'Coletado';            bClass = 'badge-ok'; }
-      else if (d.situacao === STATUS_MISS)  { badge = 'Falta Coletar';       bClass = 'badge-danger'; }
-      else                               { badge = 'Sem Visitas / Viagem'; bClass = 'badge-warn'; }
+      if (d.situacao === STATUS_OK)     { badge = t.stOk[LANG];            bClass = 'badge-ok'; }
+      else if (d.situacao === STATUS_MISS)  { badge = t.stMiss[LANG];       bClass = 'badge-danger'; }
+      else                               { badge = t.kTrip[LANG];          bClass = 'badge-warn'; }
 
       return `
         <tr>
@@ -562,22 +609,39 @@
   // ── EXPORT EXCEL ────────────────────────────────────────────────────────────
   function exportExcel() {
     if (!allData || !allData.length) {
-      alert("Nenhum dado disponível para exportar.");
+      alert(LANG === 'en' ? "No data to export." : "Nenhum dado disponível para exportar.");
       return;
     }
     
-    const dataToExport = allData.map(d => ({
-      "Responsável": d.responsavel,
-      "Cliente": d.cliente,
-      "Bandeira": d.bandeira,
-      "Nome do PDV Novo": d.nomePdvNovo,
-      "De Para Com A Coleta": d.deParaColeta,
-      "Nome PDV Antigo": d.nomePdvAntigo,
-      "Cidade": d.cidade,
-      "Estado": d.estado,
-      "Região": d.regiao,
-      "Situação": d.situacao
-    }));
+    const dataToExport = allData.map(d => {
+      if(LANG === 'en') {
+        return {
+          "Consultant": d.responsavel,
+          "Client": d.cliente,
+          "Brand": d.bandeira,
+          "POS Name (New)": d.nomePdvNovo,
+          "Routing Change": d.deParaColeta,
+          "POS Name (Old)": d.nomePdvAntigo,
+          "City": d.cidade,
+          "State": d.estado,
+          "Region": d.regiao,
+          "Status": d.situacao === STATUS_OK ? 'Collected' : (d.situacao === STATUS_MISS ? 'Missing' : 'Trip / No Visit')
+        };
+      } else {
+        return {
+          "Responsável": d.responsavel,
+          "Cliente": d.cliente,
+          "Bandeira": d.bandeira,
+          "Nome do PDV Novo": d.nomePdvNovo,
+          "De Para Com A Coleta": d.deParaColeta,
+          "Nome PDV Antigo": d.nomePdvAntigo,
+          "Cidade": d.cidade,
+          "Estado": d.estado,
+          "Região": d.regiao,
+          "Situação": d.situacao
+        };
+      }
+    });
 
     const ws = XLSX.utils.json_to_sheet(dataToExport);
     const wb = XLSX.utils.book_new();
