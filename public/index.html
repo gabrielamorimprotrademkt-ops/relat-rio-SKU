@@ -56,12 +56,10 @@
       flex-wrap: wrap;
     }
     .header-left { display: flex; align-items: center; gap: 14px; }
-    .logo-ring {
-      width: 44px; height: 44px; border-radius: 12px;
-      background: var(--grad-pro);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 14px; flex-shrink: 0;
-      font-weight: 700; color: #FCFCFC;
+    .logo {
+      height: 46px; width: auto;
+      object-fit: contain;
+      flex-shrink: 0;
     }
     header h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.3px; }
     header p { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
@@ -243,7 +241,7 @@
 <!-- HEADER -->
 <header>
   <div class="header-left">
-    <div class="logo-ring">PRO</div>
+    <img src="logo%20novo%202026.png" alt="Protrade MKT" class="logo">
     <div>
       <h1>DASHBOARD — SKUs SAMSUNG</h1>
       <p>Efetividade de coleta por bandeira · Protrade MKT</p>
@@ -400,8 +398,8 @@
 
     document.getElementById('kpi-grid').innerHTML = `
       <div class="kpi-card grad">
-        <div class="kpi-label">Total de Lojas</div>
-        <div class="kpi-value grad">${total}</div>
+        <div class="kpi-label">Total de Lojas (Elegíveis)</div>
+        <div class="kpi-value grad">${elegiveis}</div>
         <div class="kpi-sub">${activeBandeira === 'TODAS' ? 'TODAS AS BANDEIRAS' : activeBandeira}</div>
       </div>
       <div class="kpi-card pink">
@@ -538,7 +536,10 @@
   // TABLE
   function renderTable(data) {
     const tbody = document.getElementById('tbody');
-    document.getElementById('table-count').textContent = `(${data.length} PDVs)`;
+    
+    // Mostra o total oficial desconsiderando as viagens também igual ao painel
+    const viagensNaLista = data.filter(d => d.situacao === STATUS_VIAGEM).length;
+    document.getElementById('table-count').textContent = `(${data.length - viagensNaLista} Elegíveis)`;
 
     if (!data.length) { tbody.innerHTML = `<tr><td colspan="4" class="empty">Nenhum PDV encontrado</td></tr>`; return; }
 
