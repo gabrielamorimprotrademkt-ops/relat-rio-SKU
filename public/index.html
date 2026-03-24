@@ -315,7 +315,7 @@
   // Lógica Mística inteligente: Se estiver no seu computador, usa o arquivo. Se estiver na nuvem (Vercel), usa "Ao Vivo".
   const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
   const DATA_URL = IS_LOCAL ? './data.json' : '/api/data';
-  const LANG = IS_LOCAL ? 'en' : 'pt';
+  const LANG = 'en'; // Inglês universal ativado para o link Vercel da Samsung
 
   const t = {
     h1: { pt: 'DASHBOARD — SKUs SAMSUNG', en: 'SAMSUNG SKUs DASHBOARD' },
